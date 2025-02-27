@@ -3,6 +3,8 @@ The QA study group is working on the Playwright From Zero to Hero course on Udem
 
 ## How Do I Run The Tests?
 
+First, make sure Playwright is installed properly
+
 When testing stories and PRs in Power BT, the url of the review env is dynamic. For that reason and to make testing easier, we've setup a script in the [test.sh](./test.sh) file to allow you to enter the url of the review env or enter nothing to default to the QA url. You are also able to enter all of the normal mofications and flags that you would enter if you were just using the `npx playwright test` command (e.g. `--ui` or `path/to/file.spec.ts`). If you want to specify the url, it has to be the first argument, and it has to be a valid url starting with `https://`.
 
 **Basic Formula:** `zsh test.sh [optional url (no valid url defaults to QA)] [any other flags/modifications]`
