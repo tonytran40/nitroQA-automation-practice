@@ -8,7 +8,6 @@ dotenv.config();
 
 const baseURL = process.env.BASE_URL || NITRO_QA_URL;
 const SESSION_FILE = path.resolve(__dirname, "session.json");
-console.log(SESSION_FILE);
 
 async function globalSetup() {
   const browser = await chromium.launch();
@@ -69,17 +68,7 @@ async function globalSetup() {
 }
 
 function formatSession(session) {
-  console.log("Checking session type...");
-  if (!Array.isArray(session)) {
-    console.log("session is object");
-    session = handleSessionIsObject(session);
-    return session
-  }
-  return session;
-}
-
-function handleSessionIsObject(session) {
-  return session.cookies;
+  return !Array.isArray(session) ? session.cookies : session;
 }
 
 async function hasValidCookies(session) {
