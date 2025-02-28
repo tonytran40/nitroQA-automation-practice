@@ -6,8 +6,6 @@ import { execSync } from "child_process";
 
 dotenv.config();
 
-const baseURL = process.env.BASE_URL || NITRO_QA_URL;
-
 async function globalSetup() {
   const browser = await chromium.launch();
   const page = await browser.newPage();
@@ -19,7 +17,7 @@ async function globalSetup() {
     if (await hasValidCookies(session)) {
       console.log("Valid session cookies found, reusing session...");
       await page.context().addCookies(session);
-      await page.goto(baseURL);
+      await page.goto('/');
 
       // Verify if session is still valid
       if (await isSessionValid(page)) {
@@ -35,14 +33,9 @@ async function globalSetup() {
     console.log(
       "Skipping authenticator code. Using 'npx playwright open' to save session. Close the browser once you've logged in."
     );
-    execSync(`npx playwright open --save-storage=session.json ${baseURL}`, {
+    execSync(`npx playwright open --save-storage=session.json ${process.env.BASE_URL}`, {
       stdio: "inherit",
     });
-    await page.waitForURL((url) => url.toString().includes(NITRO_ID_LOGIN), {
-      timeout: 10000,
-    });
-    await page.fill('input[name="email"]', process.env.EMAIL || "");
-    await page.fill('input[name="password"]', process.env.PASSWORD || "");
     await browser.close();
     console.log("Session saved.");
     // now that we have the cookies, try again.
@@ -52,7 +45,7 @@ async function globalSetup() {
 
   // Perform login if session is not valid or missing
   console.log("Logging in...");
-  await page.goto(baseURL);
+  await page.goto('/');
   console.log("Waiting for redirect...");
   // Wait for the page to redirect back to the original domain
   await page.waitForURL((url) => url.toString().includes(NITRO_ID_LOGIN), {
@@ -126,8 +119,8 @@ async function hasValidCookies(session: Array<any>): Promise<boolean> {
 
 async function isSessionValid(page: Page): Promise<boolean> {
   try {
-    await page.goto(baseURL);
-    return page.url().includes(baseURL);
+    await page.goto('/');
+    return page.url().includes('/');
   } catch {
     return false;
   }
