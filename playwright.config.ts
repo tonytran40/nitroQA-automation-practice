@@ -25,6 +25,9 @@ export default defineConfig({
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: process.env.BASE_URL || NITRO_QA_URL,
 
+    /* Use session.json to save session data */
+    storageState: 'session.json',
+
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
   },

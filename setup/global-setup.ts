@@ -8,6 +8,7 @@ dotenv.config();
 
 const baseURL = process.env.BASE_URL || NITRO_QA_URL;
 const SESSION_FILE = path.resolve(__dirname, "session.json");
+console.log(SESSION_FILE);
 
 async function globalSetup() {
   const browser = await chromium.launch();
@@ -15,7 +16,8 @@ async function globalSetup() {
 
   // Check if session cookie already exists
   if (fs.existsSync(SESSION_FILE)) {
-    const session = JSON.parse(fs.readFileSync(SESSION_FILE, "utf-8"));
+    let session = JSON.parse(fs.readFileSync(SESSION_FILE, "utf-8"));
+    session = formatSession(session);
     if (await hasValidCookies(session)) {
       console.log("Valid session cookies found, reusing session...");
       await page.context().addCookies(session);
@@ -55,7 +57,7 @@ async function globalSetup() {
 
   // Save session cookie
   const cookies = await page.context().cookies();
-  const session = cookies.filter((cookie) => cookie.name.includes("nitro"));
+  let session = cookies.filter((cookie) => cookie.name.includes("nitro"));
   if (session) {
     fs.writeFileSync(SESSION_FILE, JSON.stringify(session));
     console.log("Session saved.");
@@ -64,6 +66,20 @@ async function globalSetup() {
   }
 
   await browser.close();
+}
+
+function formatSession(session) {
+  console.log("Checking session type...");
+  if (!Array.isArray(session)) {
+    console.log("session is object");
+    session = handleSessionIsObject(session);
+    return session
+  }
+  return session;
+}
+
+function handleSessionIsObject(session) {
+  return session.cookies;
 }
 
 async function hasValidCookies(session) {
@@ -76,13 +92,15 @@ async function hasValidCookies(session) {
     // Check for expiration (ensure cookies are not expired)
     const now = Math.floor(Date.now() / 1000);
     const validCookies = session.filter((cookie) => {
-      return (
-        cookie.expires &&
-        cookie.expires > now
-      );
+      return cookie.expires && cookie.expires > now;
     });
 
-    if (validCookies.length > 0 && validCookies.some(cookie => cookie.domain.includes(new URL(NITRO_ID_LOGIN).hostname))) {
+    if (
+      validCookies.length > 0 &&
+      validCookies.some((cookie) =>
+        cookie.domain.includes(new URL(NITRO_ID_LOGIN).hostname)
+      )
+    ) {
       return true;
     } else {
       console.log("Session cookies have expired.");

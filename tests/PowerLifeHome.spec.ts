@@ -14,7 +14,7 @@ test.describe("PowerLife Home Page", () => {
     await expect(page).toHaveTitle("Articles");
   });
 
-  test("filter dizzle dizzle", async ({ page }) => {
+  test("filter dizzle sizzle", async ({ page }) => {
     await page.getByRole("link", { name: "Dizzle's Sizzle" }).click();
     await page.locator("button").first().click();
     await page.locator("#q_appears_at_range").click();
