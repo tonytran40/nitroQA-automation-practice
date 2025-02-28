@@ -7,7 +7,8 @@ import { NITRO_ID_LOGIN, NITRO_QA_URL } from "../CONSTANTS";
 dotenv.config();
 
 const baseURL = process.env.BASE_URL || NITRO_QA_URL;
-const SESSION_FILE = path.resolve(__dirname, "session.json");
+const ROOT_DIR = path.resolve(__dirname, '..');
+const SESSION_FILE = path.resolve(ROOT_DIR, "session.json");
 
 async function globalSetup() {
   const browser = await chromium.launch();
