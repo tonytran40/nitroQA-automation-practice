@@ -2,6 +2,7 @@ import { chromium } from "playwright";
 import fs from "fs";
 import dotenv from "dotenv";
 import { NITRO_ID_LOGIN, NITRO_QA_URL, SESSION_FILE } from "../CONSTANTS";
+import { execSync } from "child_process";
 
 dotenv.config();
 
@@ -28,6 +29,20 @@ async function globalSetup() {
     }
   }
 
+  const isUsingAuthenticator = await promptAuthenticatorApp();
+  // if we aren't using an authenticator, just let the user sign in manually and capture the cookies.
+  if (!isUsingAuthenticator) {
+    console.log(
+      "Skipping authenticator code. Using 'npx playwright open' to save session. Close the browser once you've logged in." 
+    );
+    execSync(`npx playwright open --save-storage=session.json ${baseURL}`, { stdio: "inherit" });
+    await browser.close();
+    console.log("Session saved.");
+    // now that we have the cookies, try again.
+    await globalSetup();
+    return;
+  }
+
   // Perform login if session is not valid or missing
   console.log("Logging in...");
   await page.goto(baseURL);
@@ -39,10 +54,11 @@ async function globalSetup() {
   await page.fill('input[name="email"]', process.env.EMAIL || "");
   await page.fill('input[name="password"]', process.env.PASSWORD || "");
   await page.click("#sign-in-button");
-
-  const authenticatorCode = await promptAuthenticatorCode();
+  let authenticatorCode = "";
+  authenticatorCode = await promptAuthenticatorCode();
   await page.fill('input[name="otp_attempt"]', authenticatorCode);
   await page.click("#submit-otp-button");
+
   console.log("Waiting for redirect...");
   // Wait for the page to redirect back to the original domain
   await page.waitForURL(
@@ -108,6 +124,22 @@ async function isSessionValid(page) {
   } catch {
     return false;
   }
+}
+
+async function promptAuthenticatorApp(): Promise<boolean> {
+  return new Promise((resolve) => {
+    const rl = require("readline").createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
+    rl.question(
+      "Are you using an authenticator app for 2FA? (y/n): ",
+      (answer: string) => {
+        rl.close();
+        resolve(answer.trim().toLowerCase() === "y");
+      }
+    );
+  });
 }
 
 async function promptAuthenticatorCode(): Promise<string> {

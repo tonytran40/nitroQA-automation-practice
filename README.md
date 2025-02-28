@@ -1,19 +1,20 @@
 # NitroQA Automation Testing with Playwright
 The QA study group is working on the Playwright From Zero to Hero course on Udemy, so as part of my learning I have started to compile test suites inside of Nitro's QA environment. This repository can be used and shared by other QAs looking to practice their skills with PW. Huge thank you to Mike Clancy for helping to develop the setup scripts and config files that are used here.
 
-## Authenticating a User and Storing Session Data
+## Basic Setup
 
-If you are using an authenticator app to login to Nitro, feel free to skip this step. With recent changes to NitroID and the use of pass keys, this is an alternative, more manual method to authenticate yourself before you can run tests.
+After you've cloned this repo, run the following commands to get everything setup correctly
 
 ```bash
-npx playwright open --save-storage session.json
+npm install
+npx playwright install
 ```
-
-Running this command will open a chromium browser where you can navigate to whichever environment(s) you want to run tests in. Closing this window saves your session data to the session.json file where it can be accessed by the test scripts.
 
 ## How Do I Run The Tests?
 
-First, make sure Playwright is installed properly
+First, make sure Playwright is installed properly. 
+
+If this is the first time you're using this testing repo (you don't have a session.json file) or you haven't used this repo in a while (your saved cookies are invalid), you will be prompted to log in either using an authenticator (in which case you should have your email and password as environment variables) or simply through a login window. Be sure to close the login window after successfully logging in to save your cookies.
 
 When testing stories and PRs in Power BT, the url of the review env is dynamic. For that reason and to make testing easier, we've setup a script in the [test.sh](./test.sh) file to allow you to enter the url of the review env or enter nothing to default to the QA url. You are also able to enter all of the normal mofications and flags that you would enter if you were just using the `npx playwright test` command (e.g. `--ui` or `path/to/file.spec.ts`). If you want to specify the url, it has to be the first argument, and it has to be a valid url starting with `https://`.
 
