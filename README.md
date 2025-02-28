@@ -14,7 +14,7 @@ npx playwright install
 
 First, make sure Playwright is installed properly. 
 
-If this is the first time you're using this testing repo (you don't have a session.json file) or you haven't used this repo in a while (your saved cookies are invalid), you will be prompted to log in either using an authenticator (in which case you should have your email and password as environment variabled) or simply through a login window. Be sure to close the login window after successfully logging in to save your cookies.
+If this is the first time you're using this testing repo (you don't have a session.json file) or you haven't used this repo in a while (your saved cookies are invalid), you will be prompted to log in either using an authenticator (in which case you should have your email and password as environment variables) or simply through a login window. Be sure to close the login window after successfully logging in to save your cookies.
 
 When testing stories and PRs in Power BT, the url of the review env is dynamic. For that reason and to make testing easier, we've setup a script in the [test.sh](./test.sh) file to allow you to enter the url of the review env or enter nothing to default to the QA url. You are also able to enter all of the normal mofications and flags that you would enter if you were just using the `npx playwright test` command (e.g. `--ui` or `path/to/file.spec.ts`). If you want to specify the url, it has to be the first argument, and it has to be a valid url starting with `https://`.
 
