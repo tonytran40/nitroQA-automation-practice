@@ -9,7 +9,7 @@ elif [[ "$1" =~ ^https?:// ]]; then
   BASE_URL=$1
   shift # Remove the URL from the arguments
 else
-  BASE_URL=${BASE_URL:-"https://nitroqa.powerhrg.com"} # Default to QA URL if no URL is provided
+  BASE_URL="https://nitroqa.powerhrg.com" # Default to QA URL if no URL is provided
 fi
 
 # Print the base URL being used

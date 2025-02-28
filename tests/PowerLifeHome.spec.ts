@@ -2,7 +2,7 @@ import { test, expect } from "./fixtures";
 
 test.describe("PowerLife Home Page", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("https://nitroqa.powerhrg.com/powerlife/home?mt=PowerLife");
+    await page.goto("/");
   });
 
   test("has title", async ({ page }) => {

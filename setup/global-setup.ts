@@ -1,4 +1,4 @@
-import { chromium } from "playwright";
+import { chromium, Page } from "playwright";
 import fs from "fs";
 import dotenv from "dotenv";
 import { NITRO_ID_LOGIN, NITRO_QA_URL, SESSION_FILE } from "../CONSTANTS";
@@ -33,9 +33,16 @@ async function globalSetup() {
   // if we aren't using an authenticator, just let the user sign in manually and capture the cookies.
   if (!isUsingAuthenticator) {
     console.log(
-      "Skipping authenticator code. Using 'npx playwright open' to save session. Close the browser once you've logged in." 
+      "Skipping authenticator code. Using 'npx playwright open' to save session. Close the browser once you've logged in."
     );
-    execSync(`npx playwright open --save-storage=session.json ${baseURL}`, { stdio: "inherit" });
+    execSync(`npx playwright open --save-storage=session.json ${baseURL}`, {
+      stdio: "inherit",
+    });
+    await page.waitForURL((url) => url.toString().includes(NITRO_ID_LOGIN), {
+      timeout: 10000,
+    });
+    await page.fill('input[name="email"]', process.env.EMAIL || "");
+    await page.fill('input[name="password"]', process.env.PASSWORD || "");
     await browser.close();
     console.log("Session saved.");
     // now that we have the cookies, try again.
@@ -85,7 +92,7 @@ export function formatSession(session) {
   return !Array.isArray(session) ? session.cookies : session;
 }
 
-async function hasValidCookies(session) {
+async function hasValidCookies(session: Array<any>): Promise<boolean> {
   if (!session || session.length <= 1) {
     console.log("No cookies found");
     return false;
@@ -117,7 +124,7 @@ async function hasValidCookies(session) {
   return false;
 }
 
-async function isSessionValid(page) {
+async function isSessionValid(page: Page): Promise<boolean> {
   try {
     await page.goto(baseURL);
     return page.url().includes(baseURL);
