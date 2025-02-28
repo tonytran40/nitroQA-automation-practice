@@ -1,9 +1,6 @@
 import { test as base, BrowserContext } from "@playwright/test";
 import fs from "fs";
-import path from "path";
-
-const ROOT_DIR = path.resolve(__dirname, '..');
-const SESSION_FILE = path.resolve(ROOT_DIR, "session.json");
+import { SESSION_FILE } from "../CONSTANTS";
 
 // Extend the base test with a custom fixture
 export const test = base.extend<{

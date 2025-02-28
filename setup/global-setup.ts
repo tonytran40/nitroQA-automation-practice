@@ -1,14 +1,11 @@
 import { chromium } from "playwright";
 import fs from "fs";
-import path from "path";
 import dotenv from "dotenv";
-import { NITRO_ID_LOGIN, NITRO_QA_URL } from "../CONSTANTS";
+import { NITRO_ID_LOGIN, NITRO_QA_URL, SESSION_FILE } from "../CONSTANTS";
 
 dotenv.config();
 
 const baseURL = process.env.BASE_URL || NITRO_QA_URL;
-const ROOT_DIR = path.resolve(__dirname, '..');
-const SESSION_FILE = path.resolve(ROOT_DIR, "session.json");
 
 async function globalSetup() {
   const browser = await chromium.launch();
