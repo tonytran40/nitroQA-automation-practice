@@ -1,5 +1,15 @@
 # NitroQA Automation Testing with Playwright
-The QA study group is working on the Playwright From Zero to Hero course on Udemy, so as part of my learning I have started to compile test suites inside of Nitro's QA environment. This repository can be used and shared by other QAs looking to practice their skills with PW.
+The QA study group is working on the Playwright From Zero to Hero course on Udemy, so as part of my learning I have started to compile test suites inside of Nitro's QA environment. This repository can be used and shared by other QAs looking to practice their skills with PW. Huge thank you to Mike Clancy for helping to develop the setup scripts and config files that are used here.
+
+## Authenticating a User and Storing Session Data
+
+If you are using an authenticator app to login to Nitro, feel free to skip this step. With recent changes to NitroID and the use of pass keys, this is an alternative, more manual method to authenticate yourself before you can run tests.
+
+```bash
+npx playwright open --save-storage setup/session.json
+```
+
+Running this command will open a chromium browser where you can navigate to whichever environment(s) you want to run tests in. Closing this window saves your session data to the [setup directory](/setup/) where it can be accessed by the test scripts.
 
 ## How Do I Run The Tests?
 
