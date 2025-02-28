@@ -1,7 +1,7 @@
 import { chromium, Page } from "playwright";
 import fs from "fs";
 import dotenv from "dotenv";
-import { NITRO_ID_LOGIN, NITRO_QA_URL, SESSION_FILE } from "../CONSTANTS";
+import { NITRO_ID_LOGIN, SESSION_FILE, BASE_URL } from "../CONSTANTS";
 import { execSync } from "child_process";
 
 dotenv.config();
@@ -17,7 +17,7 @@ async function globalSetup() {
     if (await hasValidCookies(session)) {
       console.log("Valid session cookies found, reusing session...");
       await page.context().addCookies(session);
-      await page.goto('/');
+      await page.goto(BASE_URL);
 
       // Verify if session is still valid
       if (await isSessionValid(page)) {
@@ -33,7 +33,7 @@ async function globalSetup() {
     console.log(
       "Skipping authenticator code. Using 'npx playwright open' to save session. Close the browser once you've logged in."
     );
-    execSync(`npx playwright open --save-storage=session.json ${process.env.BASE_URL}`, {
+    execSync(`npx playwright open --save-storage=session.json ${BASE_URL}`, {
       stdio: "inherit",
     });
     await browser.close();
@@ -45,7 +45,7 @@ async function globalSetup() {
 
   // Perform login if session is not valid or missing
   console.log("Logging in...");
-  await page.goto('/');
+  await page.goto(BASE_URL);
   console.log("Waiting for redirect...");
   // Wait for the page to redirect back to the original domain
   await page.waitForURL((url) => url.toString().includes(NITRO_ID_LOGIN), {
@@ -62,7 +62,7 @@ async function globalSetup() {
   console.log("Waiting for redirect...");
   // Wait for the page to redirect back to the original domain
   await page.waitForURL(
-    (url) => url.toString().includes(process.env.BASE_URL || NITRO_QA_URL),
+    (url) => url.toString().includes(BASE_URL),
     {
       timeout: 10000,
     }
@@ -119,8 +119,8 @@ async function hasValidCookies(session: Array<any>): Promise<boolean> {
 
 async function isSessionValid(page: Page): Promise<boolean> {
   try {
-    await page.goto('/');
-    return page.url().includes('/');
+    await page.goto(BASE_URL);
+    return page.url().includes(BASE_URL);
   } catch {
     return false;
   }
