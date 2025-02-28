@@ -6,7 +6,7 @@ The QA study group is working on the Playwright From Zero to Hero course on Udem
 If you are using an authenticator app to login to Nitro, feel free to skip this step. With recent changes to NitroID and the use of pass keys, this is an alternative, more manual method to authenticate yourself before you can run tests.
 
 ```bash
-npx playwright open --save-storage setup/session.json
+npx playwright open --save-storage session.json
 ```
 
 Running this command will open a chromium browser where you can navigate to whichever environment(s) you want to run tests in. Closing this window saves your session data to the [setup directory](/setup/) where it can be accessed by the test scripts.
