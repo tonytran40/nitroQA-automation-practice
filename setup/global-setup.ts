@@ -81,7 +81,7 @@ async function globalSetup() {
   await browser.close();
 }
 
-function formatSession(session) {
+export function formatSession(session) {
   return !Array.isArray(session) ? session.cookies : session;
 }
 
