@@ -9,7 +9,7 @@ If you are using an authenticator app to login to Nitro, feel free to skip this 
 npx playwright open --save-storage session.json
 ```
 
-Running this command will open a chromium browser where you can navigate to whichever environment(s) you want to run tests in. Closing this window saves your session data to the [setup directory](/setup/) where it can be accessed by the test scripts.
+Running this command will open a chromium browser where you can navigate to whichever environment(s) you want to run tests in. Closing this window saves your session data to the session.json file where it can be accessed by the test scripts.
 
 ## How Do I Run The Tests?
 
