@@ -2,7 +2,6 @@ import { chromium, Page } from "playwright";
 import fs from "fs";
 import dotenv from "dotenv";
 import { NITRO_ID_LOGIN, SESSION_FILE, BASE_URL } from "../CONSTANTS";
-import { execSync } from "child_process";
 
 dotenv.config();
 
@@ -31,15 +30,38 @@ async function globalSetup() {
   // if we aren't using an authenticator, just let the user sign in manually and capture the cookies.
   if (!isUsingAuthenticator) {
     console.log(
-      "Skipping authenticator code. Using 'npx playwright open' to save session. Close the browser once you've logged in."
+      "Skipping authenticator code. Close the browser once you've logged in."
     );
-    execSync(`npx playwright open --save-storage=session.json ${BASE_URL}`, {
-      stdio: "inherit",
+
+    // Open browser to allow user to sign in
+    const browser = await chromium.launch({ headless: false });
+    const context = await browser.newContext();
+    const page = await context.newPage();
+
+    await page.goto(BASE_URL);
+
+    await page.fill('input[name="email"]', process.env.EMAIL || "");
+    await page.fill('input[name="password"]', process.env.PASSWORD || "");
+    if (process.env.EMAIL && process.env.PASSWORD) {
+      await page.click("#sign-in-button");
+    }
+
+    // Wait for user to enter 2FA code and close the window
+    console.log("Waiting for user to enter 2FA and close browser");
+    await new Promise((resolve) => {
+      const checkPages = setInterval(async () => {
+        if ((await context.pages()).length === 0) {
+          clearInterval(checkPages);
+          resolve(null);
+        }
+      }, 500); // Check every 500ms
     });
-    await browser.close();
+
+    // Save session data to 'session.json'
+    console.log("Window closed. Saving session data...");
+    await context.storageState({ path: SESSION_FILE });
     console.log("Session saved.");
-    // now that we have the cookies, try again.
-    await globalSetup();
+
     return;
   }
 
@@ -61,12 +83,9 @@ async function globalSetup() {
 
   console.log("Waiting for redirect...");
   // Wait for the page to redirect back to the original domain
-  await page.waitForURL(
-    (url) => url.toString().includes(BASE_URL),
-    {
-      timeout: 10000,
-    }
-  );
+  await page.waitForURL((url) => url.toString().includes(BASE_URL), {
+    timeout: 10000,
+  });
 
   // Save session cookie
   const cookies = await page.context().cookies();
