@@ -16,7 +16,7 @@ async function globalSetup() {
     if (await hasValidCookies(session)) {
       console.log("Valid session cookies found, reusing session...");
       await page.context().addCookies(session);
-      await page.goto(BASE_URL);
+      await page.goto(BASE_URL); //check this out later on
 
       // Verify if session is still valid
       if (await isSessionValid(page)) {
