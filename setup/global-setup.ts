@@ -50,11 +50,11 @@ async function globalSetup() {
     console.log("Waiting for user to enter 2FA and close browser");
     await new Promise((resolve) => {
       const checkPages = setInterval(async () => {
-        if ((await context.pages()).length === 0) {
+        if ((context.pages()).length === 0) {
           clearInterval(checkPages);
           resolve(null);
         }
-      }, 500); // Check every 500ms
+      }, 500);
     });
 
     // Save session data to 'session.json'
